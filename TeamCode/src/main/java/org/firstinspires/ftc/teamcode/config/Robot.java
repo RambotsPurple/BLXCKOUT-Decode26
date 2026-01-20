@@ -153,12 +153,15 @@ public class Robot {
         } // end of if..else
 
         // params for drive
+        // TODO tune and use ts later bru
         follower.setTeleOpDrive(
                 -driver.getLeftX() ,
                 -driver.getLeftY() ,
                 turn,
                 false
         );
+
+
 
         // move turret
         turretSubsystem.setPower(Math.pow(operator.getRightX(), 3));
@@ -266,6 +269,11 @@ public class Robot {
         follower.update();
         cs.run();
     } //end of aPeriodic
+
+    // TODO maybe nuke this idk man im gonna dieeeeeeeeeee
+    public void badDrive() {
+        driveSubsystem.drive(0, 0, 0);
+    }
 
     /**
      * Runs on the start of autoOp
