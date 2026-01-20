@@ -9,7 +9,6 @@ import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.lynx.LynxModule;
 
@@ -34,13 +33,14 @@ public class Robot {
     public CommandScheduler cs = CommandScheduler.getInstance();
 
     protected GamepadEx driver;
+    protected GamepadEx operator;
 
     // Instantiate subsystems
     public ShooterSubsystem shooterSubsystem;
     public IntakeSubsystem intakeSubsystem;
     public TransferSubsystem transferSubsystem;
     public DriveSubsystem driveSubsystem;
-    public HoodSubsystem hoodSubsystem;
+    public TurretSubsystem turretSubsystem;
 
     public LimeLightSubsystem limeLightSubsystem;
     public IndexerSubsystem indexerSubsystem;
@@ -67,17 +67,18 @@ public class Robot {
      * @param driver driver gamepad
      * @param telemetry allows for telemetry output
      **/
-    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Telemetry telemetry) {
+    public Robot(HardwareMap h, Alliance alliance, Gamepad driver, Gamepad operator, Telemetry telemetry) {
         shooterSubsystem = new ShooterSubsystem(h,telemetry);
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h,alliance);
-        hoodSubsystem = new HoodSubsystem(h,telemetry);
+        turretSubsystem = new TurretSubsystem(h,telemetry);
         indexerSubsystem = new IndexerSubsystem(h,telemetry);
         follower = Constants.createFollower(h);
         follower.setStartingPose(new Pose(0,0,0));
         this.alliance = alliance;
         this.driver = new GamepadEx(driver);
+        this.operator = new GamepadEx(operator);
         this.telemetry = telemetry;
 
         allHubs = h.getAll(LynxModule.class);
@@ -87,7 +88,7 @@ public class Robot {
 
         loop.resetTimer();
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem, indexerSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, turretSubsystem, indexerSubsystem
         );
 
     } //end of teleop constructor
@@ -106,7 +107,7 @@ public class Robot {
         intakeSubsystem = new IntakeSubsystem(h);
         transferSubsystem = new TransferSubsystem(h);
         limeLightSubsystem = new LimeLightSubsystem(h, alliance);
-        hoodSubsystem = new HoodSubsystem(h, telemetry);
+        turretSubsystem = new TurretSubsystem(h, telemetry);
         indexerSubsystem = new IndexerSubsystem(h, telemetry);
 
         follower = Constants.createFollower(h);
@@ -122,7 +123,7 @@ public class Robot {
         }//end of for
 
         cs.registerSubsystem(
-                shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, hoodSubsystem, indexerSubsystem
+                shooterSubsystem, transferSubsystem, intakeSubsystem, limeLightSubsystem, turretSubsystem, indexerSubsystem
         ); // end of cs
 
     }//end of teleop constructor
@@ -151,13 +152,16 @@ public class Robot {
             turn = -driver.getRightX();
         } // end of if..else
 
-        //params for drive
+        // params for drive
         follower.setTeleOpDrive(
                 -driver.getLeftX() ,
                 -driver.getLeftY() ,
                 turn,
                 false
         );
+
+        // move turret
+        turretSubsystem.setPower(Math.pow(operator.getRightX(), 3));
 
         follower.update();
         telemetry.update();
@@ -197,12 +201,19 @@ public class Robot {
 
         // event listeners
         // all input goes here except for driving which is passed in periodically
+        // also turret in periodic
         // --------------------
 
         /*
+         * DRIVER:
          * right trigger - hold: intake
          * A - activate shooter
          * B - deactivate shooter
+         */
+
+        /*
+         * OPERATOR:
+         * right stick = move turret
          */
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)

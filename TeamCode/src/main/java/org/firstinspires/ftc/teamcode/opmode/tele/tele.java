@@ -14,7 +14,7 @@ public class tele extends OpMode {
 
     @Override
     public void init() {
-        robot = new Robot(hardwareMap, Alliance.BLUE, gamepad1, telemetry);
+        robot = new Robot(hardwareMap, Alliance.BLUE, gamepad1, gamepad2, telemetry);
         robot.tele();
     }
 

@@ -1,16 +1,16 @@
 package org.firstinspires.ftc.teamcode.config.Subsystem;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.arcrobotics.ftclib.util.InterpLUT;
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class HoodSubsystem extends SubsystemBase {
+public class TurretSubsystem extends SubsystemBase {
 
-    public Servo Hood;
+    public CRServo Hood;
     //public  InterpLUT lutHood;
-    public HoodSubsystem(HardwareMap hw, Telemetry t) {
+    public TurretSubsystem(HardwareMap hw, Telemetry t) {
         //need to go on the field a tune key points top of the key inside paint and from half
         //lutHood = new InterpLUT();
         // lutHood.add(1.1, 0.2);
@@ -19,11 +19,11 @@ public class HoodSubsystem extends SubsystemBase {
         // lutHood.add(4.1, 0.9);
         // lutHood.add(5, 1);
         //lutHood.createLUT(); //calc the cubuic
-        Hood = hw.get(Servo.class, "hood");
+        Hood = hw.get(CRServo.class, "hood");
     } // init
 
-    public void setPositon(double p) {
-        Hood.setPosition(p);
+    public void setPower(double p) {
+        Hood.setPower(p);
     } // setPositon
 
 
