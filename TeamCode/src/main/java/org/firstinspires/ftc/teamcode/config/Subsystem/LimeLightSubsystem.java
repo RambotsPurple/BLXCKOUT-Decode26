@@ -26,6 +26,7 @@ public class LimeLightSubsystem extends SubsystemBase {
         limelight.start();
     }//end of lStart
 
+    // TODO optimize by combining 2 very similar get into one method
     public double getDist() {
         FiducialResult tag = null;
         double tagDist = 0;
@@ -34,7 +35,7 @@ public class LimeLightSubsystem extends SubsystemBase {
         if (results.isEmpty()) return 0;
 
         for (FiducialResult fiducial : results) {
-            if (fiducial!=null &&fiducial.getFiducialId() == id){
+            if (fiducial!=null &&fiducial.getFiducialId() == id) {
                 tag = fiducial;
                 break;
             }//end of if

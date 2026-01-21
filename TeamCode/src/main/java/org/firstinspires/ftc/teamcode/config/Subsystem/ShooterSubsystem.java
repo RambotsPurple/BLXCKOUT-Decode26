@@ -40,7 +40,6 @@ public class ShooterSubsystem extends SubsystemBase {
         shooter1.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
         shooter2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, pidfCoefficients);
 
-
     } // init
 
     public void setPower(double p) {

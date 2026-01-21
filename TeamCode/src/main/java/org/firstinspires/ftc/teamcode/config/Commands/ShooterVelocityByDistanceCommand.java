@@ -19,13 +19,16 @@ public class ShooterVelocityByDistanceCommand extends InstantCommand {
     public ShooterVelocityByDistanceCommand(ShooterSubsystem s, LimeLightSubsystem l) {
         shooter = s;
         limelight = l;
-        addRequirements(shooter, limelight);
-        currentDistance = limelight.getDist();
+        addRequirements(shooter); // do NOT add limelight - multiple commands can get data simultaneously
         shooterDistanceVelocityLut = ShooterConstants.shooterDistanceVelocityLut;
     }
 
     @Override
     public void initialize() {
+        currentDistance = limelight.getDist();
+        if (currentDistance <= 0) {
+            return;
+        }
         shooter.setRPM(shooterDistanceVelocityLut.get(currentDistance));
     }
 }
