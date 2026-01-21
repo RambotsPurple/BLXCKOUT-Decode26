@@ -17,6 +17,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.config.Commands.DefaultTurretCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.SetShooterVelocityCommand;
 import org.firstinspires.ftc.teamcode.config.Util.*;
@@ -60,7 +61,7 @@ public class Robot {
 
 
     /**
-     * This constructor below is for a single player auton anywhere
+     * This constructor below is for a single player tele anywhere
      * of the field
      ** @param h hardwaremap
      * @param alliance blue or red
@@ -90,6 +91,10 @@ public class Robot {
         cs.registerSubsystem(
                 shooterSubsystem, transferSubsystem, intakeSubsystem,limeLightSubsystem, turretSubsystem, indexerSubsystem
         );
+
+        // set default commands
+        turretSubsystem.setDefaultCommand(new DefaultTurretCommand(this.operator, turretSubsystem));
+
 
     } //end of teleop constructor
 
@@ -161,10 +166,9 @@ public class Robot {
                 false
         );
 
-
-
-        // move turret
-        turretSubsystem.setPower(Math.pow(operator.getRightX(), 3));
+        // TODO test command and then remove ts completely
+        // manual turret control - conflicts with commands
+//        turretSubsystem.setPower(Math.pow(operator.getRightX(), 3));
 
         follower.update();
         telemetry.update();
@@ -247,6 +251,7 @@ public class Robot {
         telemetry.addData("shooter 1 vel", shooterSubsystem.shooter1.getVelocity());
         telemetry.addData("shooter 2 vel", shooterSubsystem.shooter2.getVelocity());
         telemetry.addData("shooter RPM", shooterSubsystem.getRPM());
+        telemetry.addData("servo position", indexerSubsystem.indexer.getPosition());
     } //end of teleTelemetry
 
     /**

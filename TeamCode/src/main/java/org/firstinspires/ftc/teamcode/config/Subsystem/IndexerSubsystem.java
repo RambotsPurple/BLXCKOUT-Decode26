@@ -7,13 +7,13 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 public class IndexerSubsystem extends SubsystemBase {
 
-    public Servo hood;
+    public Servo indexer;
     public IndexerSubsystem(HardwareMap hw, Telemetry t) {
-        hood = hw.get(Servo.class, "flip");
+        indexer = hw.get(Servo.class, "flip");
     } // init
 
     public void setPositon(double p) {
-        hood.setPosition(p);
+        indexer.setPosition(p);
     } // setPositon
 
 
