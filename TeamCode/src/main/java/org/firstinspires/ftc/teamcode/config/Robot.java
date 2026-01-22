@@ -235,6 +235,11 @@ public class Robot {
                 new SetShooterVelocityCommand(shooterSubsystem, 0)
         );
 
+        // TODO fix this shi
+//        new Trigger(() -> Math.abs(operator.getRightY()) > 0.1
+//                cs.cancel()
+//        );
+
         // what is ts
         // driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
         //         .toggleWhenActive(state = state.idle, state = state.none);
