@@ -19,7 +19,7 @@ public class TurretSubsystem extends SubsystemBase {
         // lutHood.add(4.1, 0.9);
         // lutHood.add(5, 1);
         //lutHood.createLUT(); //calc the cubuic
-        turd = hw.get(CRServo.class, "hood");
+        turd = hw.get(CRServo.class, "turret");
     } // init
 
     public void setPower(double p) {
