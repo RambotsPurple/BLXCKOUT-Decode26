@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.config;
 
 import static org.firstinspires.ftc.teamcode.config.pedroPathing.Tuning.follower;
 
+import com.arcrobotics.ftclib.command.Command;
 import com.arcrobotics.ftclib.command.CommandScheduler;
 import com.arcrobotics.ftclib.command.button.Trigger;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
@@ -20,6 +21,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.config.Commands.DefaultTurretCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.IntakeCommand;
 import org.firstinspires.ftc.teamcode.config.Commands.SetShooterVelocityCommand;
+import org.firstinspires.ftc.teamcode.config.Commands.TurretLockOnTargetCommand;
 import org.firstinspires.ftc.teamcode.config.Util.*;
 import org.firstinspires.ftc.teamcode.config.Subsystem.*;
 import org.firstinspires.ftc.teamcode.config.pedroPathing.Constants;
@@ -58,6 +60,7 @@ public class Robot {
     public Follower getFollower(){
         return follower;
     } // end of getFollower
+    private TurretLockOnTargetCommand turretLockOnTargetCommand;
 
 
     /**
@@ -94,6 +97,7 @@ public class Robot {
 
         // set default commands
         turretSubsystem.setDefaultCommand(new DefaultTurretCommand(this.operator, turretSubsystem));
+        turretLockOnTargetCommand = new TurretLockOnTargetCommand(limeLightSubsystem, turretSubsystem);
 
 
     } //end of teleop constructor
@@ -140,7 +144,7 @@ public class Robot {
         teleTelemetry();
 
         //every 5 milliseconds clear the cache
-        if (loop.getElapsedTime() % 5 == 0) {
+        if (loop.getElapsedTime() % 20 == 0) {
             for (LynxModule hub : allHubs) {
                 hub.clearBulkCache();
             } // end of for
@@ -214,31 +218,35 @@ public class Robot {
         /*
          * DRIVER:
          * right trigger - hold: intake
-         * A - activate shooter
-         * B - deactivate shooter
          */
 
         /*
          * OPERATOR:
          * right stick = move turret
+         * right bumper - auto lock
+         * A - activate shooter
+         * B - deactivate shooter
          */
 
         new Trigger(() -> driver.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER) > 0)
                 .whenActive(new IntakeCommand(intakeSubsystem, 1))
                 .whenInactive(new IntakeCommand(intakeSubsystem, 0));
 
-        driver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new SetShooterVelocityCommand(shooterSubsystem, 6000)
         );
 
-        driver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
+        operator.getGamepadButton(GamepadKeys.Button.B).whenPressed(
                 new SetShooterVelocityCommand(shooterSubsystem, 0)
         );
 
-        // TODO fix this shi
-//        new Trigger(() -> Math.abs(operator.getRightY()) > 0.1
-//                cs.cancel()
-//        );
+        operator.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(turretLockOnTargetCommand);
+
+        // override shooter lock on with manual input
+        new Trigger(() -> Math.abs(operator.getRightX()) > 0.1)
+                // When the operator moves the stick, CANCEL the auto-aim command.
+                .whenActive(() -> cs.cancel(turretLockOnTargetCommand));
 
         // what is ts
         // driver.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
