@@ -33,15 +33,25 @@ public class   Constants {
 
 
     //    @TODO tune
-    public static PinpointConstants localizerConstants = new PinpointConstants()
-            // manual change the offsets
-            .forwardPodY(-5)
-            .strafePodX(0.5)
-            .distanceUnit(DistanceUnit.INCH)
-            .hardwareMapName("pinpoint")
-            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+//    public static PinpointConstants localizerConstants = new PinpointConstants()
+//            // manual change the offsets
+//            .forwardPodY(-5)
+//            .strafePodX(0.5)
+//            .distanceUnit(DistanceUnit.INCH)
+//            .hardwareMapName("pinpoint")
+//            .encoderResolution(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD)
+//            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
+//            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+    public static TwoWheelConstants localizerConstants = new TwoWheelConstants()
+            .forwardEncoder_HardwareMapName("leftFront")
+            .strafeEncoder_HardwareMapName("rightRear")
+            .IMU_HardwareMapName("imu")
+            .IMU_Orientation(
+                    new RevHubOrientationOnRobot(
+                            RevHubOrientationOnRobot.LogoFacingDirection.UP,
+                            RevHubOrientationOnRobot.UsbFacingDirection.LEFT
+                    )
+            );
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
             .rightFrontMotorName("rf")
@@ -57,7 +67,7 @@ public class   Constants {
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
-                .pinpointLocalizer(localizerConstants)
+                .twoWheelLocalizer(localizerConstants)
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(driveConstants)
                 .build();
